@@ -22,14 +22,14 @@ def new_call():
         # הפניה להתחברות לקוח
         return jsonify({
             "type": "extensionChange",
-            "extensionIdChange": 1663
+            "extensionIdChange": "1663"
         }
         )
     else:
         # ניתוב לתפריט הרשמה
         return jsonify({
             "type": "extensionChange",
-            "extensionIdChange": 1664
+            "extensionIdChange": "1664"
         }
         )
 
@@ -364,6 +364,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
