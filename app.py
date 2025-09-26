@@ -62,7 +62,7 @@ def login():
                     "enabledKeys": "",
                      "setMusic": "no",
                     "extensionChange": "",
-                    "text": "יותר מדי נסיונות שגויים. נסו שוב מאוחר יותר"
+                    "files":[{"text": "יותר מדי נסיונות שגויים"}]
                     }
                     )
             # אם לא - העלה את מונה הנסיונות והמשך לניסיון הבא
@@ -75,8 +75,8 @@ def login():
                 "timeout": 5,
                 "enabledKeys": "0,1,2,3,4,5,6,7,8,9,#",
                 "confirmType": "no",
-                "text": "הסיסמה שגויה. לכניסה למערכת נא הקש את הסיסמה"
-                }
+                "files": [{"text": "הסיסמה שגויה. לכניסה למערכת נא הקש את הסיסמה"
+                }]
                 )
     else:
         return jsonify({
@@ -87,8 +87,8 @@ def login():
                 "timeout": 5,
                 "enabledKeys": "0,1,2,3,4,5,6,7,8,9,#",
                 "confirmType": "no",
-                "text": "לכניסה למערכת נא הקש את הסיסמה"
-                }
+                "files": [{"text": "לכניסה למערכת נא הקש את הסיסמה"
+                }]
                 )
 
 @app.route('/sign', methods=['GET'])
@@ -124,8 +124,8 @@ def sign():
                       "enabledKeys": "0",
                        "setMusic": "no",
                       "extensionChange": "",
-                      "text": "ההרשמה הושלמה בהצלחה! לחץ 0 למעבר לתפריט הראשי"
-                    }
+                      "files": [{"text": "ההרשמה הושלמה בהצלחה! לחץ 0 למעבר לתפריט הראשי"
+                    }]
 
                     )
             except Exception as e:
@@ -138,8 +138,8 @@ def sign():
                       "enabledKeys": "",
                        "setMusic": "no",
                       "extensionChange": "",
-                      "text": "שגיאה בתהליך ההרשמה"
-                    }
+                      "files": [{"text": "שגיאה בתהליך ההרשמה"
+                    }]
 
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
@@ -154,8 +154,8 @@ def sign():
                 "min": 9,
                 "timeout": 5,
                 "confirmType": "no",
-                "text": "נא הקש את תעודת הזהות של בעל העסק"
-                }
+                "files": [{"text": "נא הקש את תעודת הזהות של בעל העסק"
+                }]
                 )
     elif key == "tz" and value:
         if validator.validate_israeli_id(value):
@@ -166,8 +166,8 @@ def sign():
                 "max": 4,
                 "min": 1,
                 "fileName": f'compeny_name {phone}',
-                "text": "אמרו בקול ברור את שם העסק"
-                }
+                "files": [{"text": "אמרו בקול ברור את שם העסק"
+                }]
                 )
         else:
             return jsonify({
@@ -177,8 +177,8 @@ def sign():
                 "min": 9,
                 "timeout": 5,
                 "confirmType": "no",
-                "text": "מספר תעודת הזהות שהוקש אינו תקין. נא הקש את תעודת הזהות של בעל העסק"
-                }
+                "files": [{"text": "מספר תעודת הזהות שהוקש אינו תקין. נא הקש את תעודת הזהות של בעל העסק"
+                }]
                 )
     elif key == "compeny_name" and value:
         compeny_name = value
@@ -189,8 +189,8 @@ def sign():
                 "min": 4,
                 "timeout": 5,
                 "confirmType": "digits",
-                "text": "נא הקש את תאריך פתיחת העסק בארבע ספרות, שתי ספרות עבור החודש, ושתי ספרות עבור השנה"
-                }
+                "files": [{"text": "נא הקש את תאריך פתיחת העסק בארבע ספרות, שתי ספרות עבור החודש, ושתי ספרות עבור השנה"
+                }]
                 )
     elif key == 'open_compeny' and value:
         month, year = value[:2], value[2:]
@@ -202,8 +202,8 @@ def sign():
                 "max": 4,
                 "min": 1,
                 "fileName": f'compeny_name {phone}',
-                "text": "אמרו בקול ברור את תחום העיסוק"
-                }
+                "files": [{"text": "אמרו בקול ברור את תחום העיסוק"
+                }]
                 )
         else:
             return jsonify({
@@ -213,8 +213,8 @@ def sign():
                 "min": 4,
                 "timeout": 5,
                 "confirmType": "digits",
-                "text": "התאריך שהוקש לא תקין. נא הקש את תאריך פתיחת העסק בארבע ספרות, שתי ספרות עבור החודש, ושתי ספרות עבור השנה"
-                }
+                "files": [{"text": "התאריך שהוקש לא תקין. נא הקש את תאריך פתיחת העסק בארבע ספרות, שתי ספרות עבור החודש, ושתי ספרות עבור השנה"
+                }]
                 )
     elif key == 'category' and value:
         category = value
@@ -225,8 +225,8 @@ def sign():
                 "min": 4,
                 "timeout": 5,
                 "confirmType": "digits",
-                "text": "נא בחר סיסמה להתחברות למערכת. הסיסמה צריכה להיות באורך של ארבע עד שמונה ספרות"
-                }
+                "files": [{"text": "נא בחר סיסמה להתחברות למערכת. הסיסמה צריכה להיות באורך של ארבע עד שמונה ספרות"
+                }]
                 )
     elif key == 'password' and value:
         password = value
@@ -247,8 +247,8 @@ def sign():
                 "max": 4,
                 "min": 1,
                 "fileName": f'name {phone}',
-                "text": "אמרו בקול ברור את שם בעל העסק"
-                }
+                "files": [{"text": "אמרו בקול ברור את שם בעל העסק"
+                }]
                 )
 
 @app.route('/create_recpt', methods=['GET'])
@@ -275,8 +275,8 @@ def create_recpt():
                       "enabledKeys": "0",
                        "setMusic": "no",
                       "extensionChange": "",
-                      "text": "הקבלה הופקה בהצלחה! לחץ אפס לחזרה לתפריט הראשי"
-                    }
+                      "files": [{"text": "הקבלה הופקה בהצלחה! לחץ אפס לחזרה לתפריט הראשי"
+                    }]
 
                     )
     if key == 'contact_name' and value:
@@ -288,8 +288,8 @@ def create_recpt():
                 "min": 1,
                 "timeout": 5,
                 "confirmType": "number",
-                "text": "נא הקש את סכום הקבלה, לנקודה עשרונית לחץ כוכבית"
-                }
+                "files": [{"text": "נא הקש את סכום הקבלה, לנקודה עשרונית לחץ כוכבית"
+                }]
                 )
     elif key == 'amout' and value:
         amout = eval(value)
@@ -299,8 +299,8 @@ def create_recpt():
                 "max": 4,
                 "min": 1,
                 "fileName": f'detailes {phone}',
-                "text": "אמרו את תיאור השירות או המוצר"
-                }
+                "files": [{"text": "אמרו את תיאור השירות או המוצר"
+                }]
                 )
     elif key == 'detailes' and value:
         detailes = value
@@ -313,8 +313,8 @@ def create_recpt():
                       "enabledKeys": "1,2",
                        "setMusic": "no",
                       "extensionChange": "",
-                      "text": f"ביקשתם להפיק קבלה עבור {contact_name}, בסכום של {amout}. תיאור: {detailes}. לאישור הקישו אחת, לתיקון הקישו שתים"
-                    }
+                      "files": [{"text": f"ביקשתם להפיק קבלה עבור {contact_name}, בסכום של {amout}. תיאור: {detailes}. לאישור הקישו אחת, לתיקון הקישו שתים"
+                    }]
 
                     )
     elif key == 'show_recpt_detailes':
@@ -366,6 +366,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
