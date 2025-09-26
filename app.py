@@ -73,6 +73,7 @@ def login():
                 "max": 10,
                 "min": 4,
                 "timeout": 5,
+                "enabledKeys": "0,1,2,3,4,5,6,7,8,9,#",
                 "confirmType": "no",
                 "text": "הסיסמה שגויה. לכניסה למערכת נא הקש את הסיסמה"
                 }
@@ -84,6 +85,7 @@ def login():
                 "max": 10,
                 "min": 4,
                 "timeout": 5,
+                "enabledKeys": "0,1,2,3,4,5,6,7,8,9,#",
                 "confirmType": "no",
                 "text": "לכניסה למערכת נא הקש את הסיסמה"
                 }
@@ -364,6 +366,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
