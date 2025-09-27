@@ -17,7 +17,7 @@ db = DatabaseService(db_path)
 def new_call():
     return jsonify({
              "type": "extensionChange",
-             "extensionIdChange": "1663"
+             "extensionIdChange": "1664"
          }
          )
     # # חילוץ פרמטרים
@@ -41,7 +41,7 @@ def new_call():
     #     )
 
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['GET']) # מזהה שלוחה 1663
 def login():
     count = 0
     phone = request.args.get('PBXphone', '')
@@ -100,7 +100,7 @@ def login():
         }
                 )
 
-@app.route('/sign', methods=['GET'])
+@app.route('/sign', methods=['GET']) # מזהה שלוחה 1664
 def sign():
     """
     הפרטים הנדרשים להרשמה:
@@ -389,6 +389,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
