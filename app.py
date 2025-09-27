@@ -15,11 +15,43 @@ db = DatabaseService(db_path)
 
 @app.route('/new_call', methods=['GET'])
 def new_call():
-    return {
-             "type": "extensionChange",
-             "extensionIdChange": "1664"
-         }
-         
+    # הדפס את כל הפרמטרים שמגיעים
+    print("=== API CALL DEBUG ===")
+    print(f"Method: {request.method}")
+    print(f"Args: {dict(request.args)}")
+    print(f"Form: {dict(request.form)}")
+    print(f"Headers: {dict(request.headers)}")
+    
+    call_id = request.args.get('PBXcallId', '') or request.form.get('PBXcallId', '')
+    phone = request.args.get('PBXphone', '') or request.form.get('PBXphone', '')
+    
+    print(f"Extracted - call_id: '{call_id}', phone: '{phone}'")
+    
+    # בדוק אם הטלפון בכלל מגיע
+    if not phone:
+        print("ERROR: No phone number received!")
+        return jsonify({"error": "No phone parameter"}), 400
+    
+    # בדוק את בסיס הנתונים
+    customer = db.get_customer_by_phone(phone)
+    print(f"Customer lookup result: {customer}")
+    
+    if customer:
+        response = {
+            "type": "extensionChange",
+            "extensionIdChange": "1663"
+        }
+        print(f"Sending response for existing customer: {response}")
+        return jsonify(response)
+    else:
+        response = {
+            "type": "extensionChange",
+            "extensionIdChange": "1664" 
+        }
+        print(f"Sending response for new customer: {response}")
+        return jsonify(response)
+# @app.route('/new_call', methods=['GET', 'POST'])
+# def new_call():
     # # חילוץ פרמטרים
     # call_id = request.args.get('PBXcallId', '')
     # phone = request.args.get('PBXphone', '')
@@ -389,6 +421,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
