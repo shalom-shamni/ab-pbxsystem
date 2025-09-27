@@ -38,16 +38,29 @@ def new_call():
     
     if customer:
         response = {
-            "type": "extensionChange",
-            "extensionIdChange": "1663"
-        }
+                    "type": "simpleMenu",
+                    "name": "error_password",
+                    "times": 1,
+                    "timeout": 0.1,
+                    "enabledKeys": "",
+                     "setMusic": "no",
+                    "extensionChange": "1663",
+                    "files":[{"text": ""}]
+                    }
+                    
         print(f"Sending response for existing customer: {response}")
         return jsonify(response)
     else:
         response = {
-            "type": "extensionChange",
-            "extensionIdChange": "1673"
-        }
+                    "type": "simpleMenu",
+                    "name": "error_password",
+                    "times": 1,
+                    "timeout": 0.1,
+                    "enabledKeys": "",
+                     "setMusic": "no",
+                    "extensionChange": "1664",
+                    "files":[{"text": ""}]
+                    }
         print(f"Sending response for new customer: {response}")
         return jsonify(response)
 # @app.route('/new_call', methods=['GET', 'POST'])
@@ -421,6 +434,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
