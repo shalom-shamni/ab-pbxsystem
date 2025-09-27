@@ -14,24 +14,40 @@ db = DatabaseService(db_path)
 
 @app.route('/new_call', methods=['GET'])
 def new_call():
-    # חילוץ פרמטרים
-    call_id = request.args.get('PBXcallId', '')
-    phone = request.args.get('PBXphone', '')
-    # בדיקה אם לקוח קיים לפי מספר טלפון
-    if db.get_customer_by_phone(phone):
-        # הפניה להתחברות לקוח
-        return jsonify({
-            "type": "extensionChange",
-            "extensionIdChange": "1663"
-        }
-        )
+    # ניתוב שיחה ראשוני
+    key = list(request.args.keys())[-1]
+    value = request.args[key]
+    if key == 'login' and value:
+        # חילוץ פרמטרים
+        call_id = request.args.get('PBXcallId', '')
+        phone = request.args.get('PBXphone', '')
+        # בדיקה אם לקוח קיים לפי מספר טלפון
+        if db.get_customer_by_phone(phone):
+            # הפניה להתחברות לקוח
+            return jsonify({
+                "type": "extensionChange",
+                "extensionIdChange": "1663"
+            }
+            )
+        else:
+            # ניתוב לתפריט הרשמה
+            return jsonify({
+                "type": "extensionChange",
+                "extensionIdChange": "1664"
+            }
+            )
     else:
-        # ניתוב לתפריט הרשמה
         return jsonify({
-            "type": "extensionChange",
-            "extensionIdChange": "1664"
-        }
-        )
+                    "type": "simpleMenu",
+                    "name": "login",
+                    "times": 1,
+                    "timeout": 5,
+                    "enabledKeys": "1,2,3,4,5,67,8,9,0",
+                     "setMusic": "no",
+                    "extensionChange": "",
+                    "files":[{"text": "ברוכים הבאים! לכניסה למערכת הקישו אחת"}]
+                    }
+                    )
 
 
 @app.route('/login', methods=['GET'])
@@ -382,6 +398,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
