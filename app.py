@@ -15,11 +15,11 @@ db = DatabaseService(db_path)
 
 @app.route('/new_call', methods=['GET'])
 def new_call():
-    return jsonify({
+    return {
              "type": "extensionChange",
              "extensionIdChange": "1664"
          }
-         )
+         
     # # חילוץ פרמטרים
     # call_id = request.args.get('PBXcallId', '')
     # phone = request.args.get('PBXphone', '')
@@ -389,6 +389,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
