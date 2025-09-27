@@ -13,7 +13,7 @@ db_path = r"pbx_system.db"
 db = DatabaseService(db_path)
 
 
-@app.route('/new_call', methods=['GET'])
+@app.route('/new_call', methods=['GET', 'POST'])
 def new_call():
     # הדפס את כל הפרמטרים שמגיעים
     print("=== API CALL DEBUG ===")
@@ -421,6 +421,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
