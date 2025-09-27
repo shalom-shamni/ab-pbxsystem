@@ -46,7 +46,7 @@ def new_call():
     else:
         response = {
             "type": "extensionChange",
-            "extensionIdChange": "1664" 
+            "extensionPathChange": "זיהוי משתמש > התחברות לקוחות קיימים" 
         }
         print(f"Sending response for new customer: {response}")
         return jsonify(response)
@@ -421,6 +421,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
