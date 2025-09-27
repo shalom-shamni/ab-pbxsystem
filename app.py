@@ -12,44 +12,34 @@ db_path = r"pbx_system.db"
 
 db = DatabaseService(db_path)
 
-app.url_map.strict_slashes = False  # מונע 308 אוטומטיים
 
-# דוגמה: נניח שיש לך אובייקט db מוכן
-# from mypkg.database import DatabaseService
-# db = DatabaseService(DB_PATH)
-
-@app.route('/new_call', methods=['GET','POST'])
+@app.route('/new_call', methods=['GET'])
 def new_call():
-    try:
-        phone = request.args.get('PBXphone') or request.form.get('PBXphone')
-        # אם חסר טלפון – עדיין החזר מודול תקני, לא שגיאה גולמית
-        if not phone:
-            return jsonify({
-                "type": "simpleMenu",
-                "name": "missingPhone",
-                "times": 1,
-                "timeout": 3,
-                "enabledKeys": "1234567890*#",
-                "extensionChange": "..",
-                "files": [{"text": "לא זוהה מספר טלפון. חוזרים לתפריט הקודם."}]
-            }), 200
+    return jsonify({
+             "type": "extensionChange",
+             "extensionIdChange": "1663"
+         }
+         )
+    # # חילוץ פרמטרים
+    # call_id = request.args.get('PBXcallId', '')
+    # phone = request.args.get('PBXphone', '')
+    # # בדיקה אם לקוח קיים לפי מספר טלפון
+    # if db.get_customer_by_phone(phone):
+    #     # הפניה להתחברות לקוח
+    #     return jsonify({
+    #         "type": "extensionChange",
+    #         "extensionIdChange": "1663"
+    #     }
+    #     )
 
-        customer = db.get_customer_by_phone(phone)
-        target = "1663" if customer else "1664"
-        return jsonify({"type":"extensionChange","extensionIdChange": target}), 200
+    # else:
+    #     # ניתוב לתפריט הרשמה
+    #     return jsonify({
+    #         "type": "extensionChange",
+    #         "extensionIdChange": "1664"
+    #     }
+    #     )
 
-    except Exception:
-        # אל תחזיר 500 גולמי – תמיד מודול תקין כדי למנוע לולאה
-        return jsonify({
-            "type": "simpleMenu",
-            "name": "serverError",
-            "times": 1,
-            "timeout": 3,
-            "enabledKeys": "1234567890*#",
-            "extensionChange": "..",
-            "files": [{"text": "תקלה זמנית במערכת. חוזרים לתפריט הקודם."}]
-        }), 200
-        
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -399,6 +389,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
