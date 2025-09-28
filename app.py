@@ -90,6 +90,19 @@ def new_call():
 def login():
     count = 0
     phone = request.args.get('PBXphone', '')
+    customer = db.get_customer_by_phone(phone)
+    if not customer:
+        return jsonify({
+                    "type": "simpleMenu",
+                    "name": "customer_not_found",
+                    "times": 1,
+                    "timeout": 0.2,
+                    "enabledKeys": "",
+                     "setMusic": "no",
+                    "extensionChange": "1664",
+                    "text": "אינכם מנויים עדיין למערכת. הינכם מועברים להרשמה"
+                    }
+                    )
     # קבלת קלט מהמשתמש - הערך האחרון
     key = list(request.args.keys())[-1]
     value = request.args[key]
@@ -434,6 +447,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
