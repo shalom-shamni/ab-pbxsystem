@@ -100,7 +100,8 @@ def login():
                     "enabledKeys": "",
                      "setMusic": "no",
                     "extensionChange": "1664",
-                    "text": "אינכם מנויים עדיין למערכת. הינכם מועברים להרשמה"
+                    "files": [{"text": "אינכם מנויים עדיין למערכת. הינכם מועברים להרשמה"
+                    }]
                     }
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
@@ -447,6 +448,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
