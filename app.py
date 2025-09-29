@@ -99,7 +99,7 @@ def login():
                     "timeout": 0.2,
                     "enabledKeys": "",
                      "setMusic": "no",
-                    "extensionChange": "1664",
+                    "extensionChange": "/2",
                     "files": [{"text": "אינכם מנויים עדיין למערכת. הינכם מועברים להרשמה"
                     }]
                     }
@@ -224,7 +224,7 @@ def sign():
                 "min": 9,
                 "timeout": 5,
                 "confirmType": "no",
-                "files": [{"text": "נא הקש את תעודת הזהות של בעל העסק"
+                "files": [{"text": "נא הקש את מספר תעודת הזהות של בעל העסק"
                 }]
         }
                 )
@@ -235,8 +235,8 @@ def sign():
                 "type": "stt",
                 "name": "compeny_name",
                 "max": 4,
-                "min": 1,
-                "fileName": f'compeny_name {phone}',
+                "min": 2,
+                "fileName": f'compeny_name_{phone}',
                 "files": [{"text": "אמרו בקול ברור את שם העסק"
                 }]
             }
@@ -274,8 +274,8 @@ def sign():
                 "type": "stt",
                 "name": "category",
                 "max": 4,
-                "min": 1,
-                "fileName": f'compeny_name {phone}',
+                "min": 2,
+                "fileName": f'compeny_name_{phone}',
                 "files": [{"text": "אמרו בקול ברור את תחום העיסוק"
                 }]
             }
@@ -323,7 +323,7 @@ def sign():
                 "name": "name",
                 "max": 4,
                 "min": 4,
-                "fileName": f'name {phone}',
+                "fileName": f"name_{phone}",
                 "files": [{"text": "אמרו בקול ברור את שם בעל העסק"
                 }]
         }
@@ -448,6 +448,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
