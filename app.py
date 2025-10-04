@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Flask, request, jsonify
 from database_service import DatabaseService
 from validation_service import ValidationService
@@ -213,10 +214,11 @@ def sign():
 
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
+    keys_dict = request.args.keys()
     key = list(request.args.keys())[-1]
     value = request.args[key]
-    if key == 'name' and value:
-        name = value
+    if 'name' in keys_dict:
+        name = keys_dict['name']
         return jsonify({
                 "type": "getDTMF",
                 "name": "tz",
@@ -253,8 +255,8 @@ def sign():
                 }]
             }
                 )
-    elif key == "compeny_name" and value:
-        compeny_name = value
+    elif "compeny_name" in keys_dict:
+        compeny_name = keys_dict['compeny_name']
         return jsonify({
                 "type": "getDTMF",
                 "name": "open_compeny",
@@ -267,9 +269,8 @@ def sign():
         }
                 )
     elif key == 'open_compeny' and value:
-        month, year = value[:2], value[2:]
-        if 1 <= int(month) <= 12:
-            open_compeny = f"{month}/{year}"
+        if 1950 < value < int(datetime.now().year):
+            open_compeny = value
             return jsonify({
                 "type": "stt",
                 "name": "category",
@@ -448,6 +449,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
