@@ -198,7 +198,7 @@ def sign():
                 "type": "stt",
                 "name": "category",
                 "max": 4,
-                "min": 1,
+                "min": 2,
                 "fileName": f'compeny_name {phone}',
                 "files": [{"text": "אמרו בקול ברור את תחום העיסוק"}]
                 }
@@ -243,8 +243,8 @@ def sign():
                 "type": "stt",
                 "name": "name",
                 "max": 4,
-                "min": 1,
-                "fileName": f'name {phone}',
+                "min": 2,
+                "fileName": f"name {phone}",
                 "files": [{"text": "אמרו בקול ברור את שם בעל העסק"}]
                 }
                 )
@@ -367,6 +367,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
