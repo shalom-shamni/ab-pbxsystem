@@ -64,27 +64,7 @@ def new_call():
                     }
         print(f"Sending response for new customer: {response}")
         return jsonify(response)
-# @app.route('/new_call', methods=['GET', 'POST'])
-# def new_call():
-    # # חילוץ פרמטרים
-    # call_id = request.args.get('PBXcallId', '')
-    # phone = request.args.get('PBXphone', '')
-    # # בדיקה אם לקוח קיים לפי מספר טלפון
-    # if db.get_customer_by_phone(phone):
-    #     # הפניה להתחברות לקוח
-    #     return jsonify({
-    #         "type": "extensionChange",
-    #         "extensionIdChange": "1663"
-    #     }
-    #     )
 
-    # else:
-    #     # ניתוב לתפריט הרשמה
-    #     return jsonify({
-    #         "type": "extensionChange",
-    #         "extensionIdChange": "1664"
-    #     }
-    #     )
 
 
 @app.route('/login', methods=['GET']) # מזהה שלוחה 1663
@@ -160,7 +140,77 @@ def login():
         }
                 )
 
-@app.route('/sign', methods=['GET']) # מזהה שלוחה 1664
+@app.route('/login', methods=['GET'])
+def login():
+    call_id = request.args.get('PBXcallid', '')
+    data = call_data.setdefault(call_id, {})
+    tryings = data.setdefault('count', 0)
+    phone = request.args.get('PBXphone', '')
+    customer = db.get_customer_by_phone(phone)
+    if not customer:
+        return jsonify({
+                    "type": "simpleMenu",
+                    "name": "no_customer_login",
+                    "times": 1,
+                    "timeout": 5,
+                    "enabledKeys": "",
+                     "setMusic": "no",
+                    "extensionChange": "1664",
+                    "files": [{"text": "אינכם רשומים למערכת. הינכם מועברים להרשמה"}]
+                    }
+                    )
+    # קבלת קלט מהמשתמש - הערך האחרון
+    key = list(request.args.keys())[-1]
+    value = request.args[key]
+
+    # אימות סיסמה
+    if key == 'password':
+        if db.verify_password(phone, value):
+            # ניתוב לתפריט לקוחות קיימים
+            return jsonify({
+                    "type": "extensionChange",
+                    "extensionIdChange": "1668"
+                }
+                )
+        else:
+            if tryings > 3:
+                # מספר נסיונות שגויים גדול מ 4 - הודעת שגיאה
+                return jsonify({
+                    "type": "simpleMenu",
+                    "name": "error_password",
+                    "times": 1,
+                    "timeout": 5,
+                    "enabledKeys": "",
+                     "setMusic": "no",
+                    "extensionChange": "",
+                    "files":[{"text": "יותר מדי נסיונות שגויים. נסו שוב מאוחר יותר"}]
+                    }
+                    )
+            # אם לא - העלה את מונה הנסיונות והמשך לניסיון הבא
+            tryings = data['count'] + 1
+            return jsonify({
+                "type": "getDTMF",
+                "name": "password",
+                "max": 10,
+                "min": 4,
+                "timeout": 5,
+                "confirmType": "no",
+                "files": [{"text": "הסיסמה שגויה. לכניסה למערכת נא הקש את הסיסמה"}]
+                }
+                )
+    else:
+        return jsonify({
+                "type": "getDTMF",
+                "name": "password",
+                "max": 10,
+                "min": 4,
+                "timeout": 5,
+                "confirmType": "no",
+                "files":[{"text": "לכניסה למערכת נא הקש את הסיסמה"}]
+                }
+                )
+
+@app.route('/sign', methods=['GET'])
 def sign():
     """
     הפרטים הנדרשים להרשמה:
@@ -173,15 +223,18 @@ def sign():
     תחום עיסוק
     """
     phone = request.args.get('PBXphone', '')
-    password = None
-    name = None
-    tz = None
-    compeny_name = None
-    open_compeny = None
-    category = None
+    call_id = request.args.get('PBXcallid', '')
+    data = call_data.setdefault(call_id, {})
+    sign_detailes = data.setdefault('sign_detailes', {})
 
     def fix_sign():
-        if all(_ is not None for _ in [password, name, tz, compeny_name, open_compeny, category]):
+        password = sign_detailes['password']
+        name = sign_detailes['name']
+        tz = sign_detailes['tz']
+        compeny_name = sign_detailes['compeny_name']
+        open_compeny = sign_detailes['open_compeny']
+        category = sign_detailes['category']
+        if all([password, name, tz, compeny_name, open_compeny, category]):
             try:
                 db.create_customer(phone, password, name, tz)
                 return jsonify(
@@ -192,9 +245,8 @@ def sign():
                       "timeout": 5,
                       "enabledKeys": "0",
                        "setMusic": "no",
-                      "extensionChange": "",
-                      "files": [{"text": "ההרשמה הושלמה בהצלחה! לחץ 0 למעבר לתפריט הראשי"
-                    }]
+                      "extensionChange": "1664",
+                      "files": [{"text": "ההרשמה הושלמה בהצלחה! הנכם מועברים לתפריט הראשי"}]
                     }
 
                     )
@@ -207,19 +259,19 @@ def sign():
                       "timeout": 5,
                       "enabledKeys": "",
                        "setMusic": "no",
-                      "extensionChange": "",
-                      "files": [{"text": "שגיאה בתהליך ההרשמה"
-                    }]
+                      "extensionChange": "1663",
+                      "files": [{"text": "שגיאה בתהליך ההרשמה"}]
                     }
 
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
-    key = list(request.args.keys())[-1]
-    if key == "=":
+    if list(request.args.keys())[-1] == "=":
         key = list(request.args.keys())[-2]
+    else:
+        key = list(request.args.keys())[-1]
     value = request.args[key]
-    if key == 'name':
-        name = value
+    if key == 'name' and value:
+        sign_detailes['name'] = value
         return jsonify({
                 "type": "getDTMF",
                 "name": "tz",
@@ -227,22 +279,20 @@ def sign():
                 "min": 9,
                 "timeout": 5,
                 "confirmType": "no",
-                "files": [{"text": "נא הקש את מספר תעודת הזהות של בעל העסק"
-                }]
-        }
+                "files": [{"text": "נא הקש את מספר תעודת הזהות של בעל העסק"}]
+                }
                 )
     elif key == "tz" and value:
         if validator.validate_israeli_id(value):
-            tz = value
+            sign_detailes['tz'] = value
             return jsonify({
                 "type": "stt",
                 "name": "compeny_name",
                 "max": 4,
-                "min": 2,
-                "fileName": f'compeny_name_{phone}',
-                "files": [{"text": "אמרו בקול ברור את שם העסק"
-                }]
-            }
+                "min": 1,
+                "fileName": f'compeny_name {phone}',
+                "files": [{"text": "אמרו בקול ברור את שם העסק"}]
+                }
                 )
         else:
             return jsonify({
@@ -252,12 +302,11 @@ def sign():
                 "min": 9,
                 "timeout": 5,
                 "confirmType": "no",
-                "files": [{"text": "מספר תעודת הזהות שהוקש אינו תקין. נא הקש את תעודת הזהות של בעל העסק"
-                }]
-            }
+                "files": [{"text": "מספר תעודת הזהות שהוקש אינו תקין. נא הקש את תעודת הזהות של בעל העסק"}]
+                }
                 )
-    elif key == "compeny_name":
-        compeny_name = value
+    elif key == "compeny_name" and value:
+        sign_detailes['compeny_name'] = value
         return jsonify({
                 "type": "getDTMF",
                 "name": "open_compeny",
@@ -265,22 +314,20 @@ def sign():
                 "min": 4,
                 "timeout": 5,
                 "confirmType": "digits",
-                "files": [{"text": "נא הקש את תאריך פתיחת העסק בארבע ספרות, שתי ספרות עבור החודש, ושתי ספרות עבור השנה"
-                }]
-        }
+            "files": [{"text": "נא הקש בארבע ספרות את שנת פתיחת העסק"}]
+                }
                 )
     elif key == 'open_compeny' and value:
-        if 1950 < value < int(datetime.now().year):
-            open_compeny = value
+        if datetime.now().year >= value >= 2000:
+            sign_detailes['open_compeny'] = value
             return jsonify({
                 "type": "stt",
                 "name": "category",
                 "max": 4,
-                "min": 2,
-                "fileName": f'compeny_name_{phone}',
-                "files": [{"text": "אמרו בקול ברור את תחום העיסוק"
-                }]
-            }
+                "min": 1,
+                "fileName": f'compeny_name {phone}',
+                "files": [{"text": "אמרו בקול ברור את תחום העיסוק"}]
+                }
                 )
         else:
             return jsonify({
@@ -290,12 +337,11 @@ def sign():
                 "min": 4,
                 "timeout": 5,
                 "confirmType": "digits",
-                "files": [{"text": "התאריך שהוקש לא תקין. נא הקש את תאריך פתיחת העסק בארבע ספרות, שתי ספרות עבור החודש, ושתי ספרות עבור השנה"
-                }]
-            }
+                "files": [{"text": "השנה שנבחרה לא תקינה. נא להקיש בארבע ספרות את שנת פתיחת העסק"}]
+                }
                 )
     elif key == 'category' and value:
-        category = value
+        sign_detailes['category'] = value
         return jsonify({
                 "type": "getDTMF",
                 "name": "password",
@@ -303,19 +349,18 @@ def sign():
                 "min": 4,
                 "timeout": 5,
                 "confirmType": "digits",
-                "files": [{"text": "נא בחר סיסמה להתחברות למערכת. הסיסמה צריכה להיות באורך של ארבע עד שמונה ספרות"
-                }]
-        }
+                "files": [{"text": "נא בחר סיסמה להתחברות למערכת. הסיסמה צריכה להיות באורך של ארבע עד שמונה ספרות"}]
+                }
                 )
     elif key == 'password' and value:
-        password = value
+        sign_detailes['password'] = value
         return fix_sign()
 
     elif key == 'fix_sign' and value == '0':
         # הפניה להתחברות לקוח
         return jsonify({
             "type": "extensionChange",
-            "extensionPathChange": "/3"
+            "extensionIdChange": "1663"
             }
             )
 
@@ -324,13 +369,11 @@ def sign():
                 "type": "stt",
                 "name": "name",
                 "max": 4,
-                "min": 4,
-                "fileName": f"name_{phone}",
-                "files": [{"text": "אמרו בקול ברור את שם בעל העסק"
-                }]
-        }
+                "min": 1,
+                "fileName": f'name {phone}',
+                "files": [{"text": "אמרו בקול ברור את שם בעל העסק"}]
+                }
                 )
-
 @app.route('/create_recpt', methods=['GET'])
 def create_recpt():
     """
@@ -450,6 +493,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
