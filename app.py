@@ -164,7 +164,7 @@ def sign():
                 "name": "compeny_name",
                 "max": 4,
                 "min": 1,
-                "fileName": f'compeny_name {phone}',
+                "fileName": f"compeny_name_{phone}",
                 "files": [{"text": "אמרו בקול ברור את שם העסק"}]
                 }
                 )
@@ -199,7 +199,7 @@ def sign():
                 "name": "category",
                 "max": 4,
                 "min": 2,
-                "fileName": f'compeny_name {phone}',
+                "fileName": f"compeny_name_{phone}",
                 "files": [{"text": "אמרו בקול ברור את תחום העיסוק"}]
                 }
                 )
@@ -244,7 +244,7 @@ def sign():
                 "name": "name",
                 "max": 4,
                 "min": 2,
-                "fileName": f"name {phone}",
+                "fileName": f"name_{phone}",
                 "files": [{"text": "אמרו בקול ברור את שם בעל העסק"}]
                 }
                 )
@@ -367,6 +367,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
