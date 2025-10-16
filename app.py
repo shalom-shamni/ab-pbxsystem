@@ -6,7 +6,7 @@ from validation_service import ValidationService
 
 import logging
 logging.basicConfig(level=logging.INFO)
-logging.info("זה יופיע בלוגים של Render")
+
 
 validator = ValidationService()
 
@@ -26,6 +26,7 @@ def login():
     call_id = request.args.get('PBXcallId', '')
     data = call_data.setdefault(call_id, {})
     tryings = data.setdefault('count', 0)
+    logging.info(tryings)
     phone = request.args.get('PBXphone', '')
     customer = db.get_customer_by_phone(phone)
     if not customer:
@@ -80,7 +81,7 @@ def login():
                     }
                     )
             # אם לא - העלה את מונה הנסיונות והמשך לניסיון הבא
-            tryings = data['count'] + 1
+            data['count'] = data['count'] + 1
             return jsonify({
                 "type": "getDTMF",
                 "name": "password",
@@ -386,6 +387,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
