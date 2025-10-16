@@ -38,7 +38,7 @@ def login():
                     }
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
-    key = list(request.args.keys())[-1]
+    key = [_ for _ in request.args.keys() if _ == "password"][-1]
     value = request.args[key]
 
     # אימות סיסמה
@@ -382,6 +382,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
