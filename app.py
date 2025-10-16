@@ -143,7 +143,7 @@ def sign():
         key = list(request.args.keys())[-2]
     else:
         key = list(request.args.keys())[-1]
-    print(f"===== the key is {key} ====="
+    print(f"===== the key is {key} =====")
     value = request.args[key]
     if key == 'name' and value:
         sign_detailes['name'] = value
@@ -368,6 +368,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
