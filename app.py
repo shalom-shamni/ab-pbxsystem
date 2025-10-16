@@ -33,7 +33,7 @@ def login():
                     "timeout": 5,
                     "enabledKeys": "",
                      "setMusic": "no",
-                    "extensionChange": "1664",
+                    "extensionChange": "..",
                     "files": [{"text": "אינכם רשומים למערכת. הינכם מועברים להרשמה"}]
                     }
                     )
@@ -87,9 +87,7 @@ def login():
                 "confirmType": "no",
                 "files": [{"text": "הסיסמה שגויה. לכניסה למערכת נא הקש את הסיסמה"}]
                 }
-                )
-    else:
-        
+                )        
 
 @app.route('/sign', methods=['GET'])
 def sign():
@@ -385,6 +383,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
