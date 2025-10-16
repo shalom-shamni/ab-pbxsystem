@@ -156,7 +156,7 @@ def sign():
     # קבלת קלט מהמשתמש - הערך האחרון
     for i in list(request.args.keys()):
         logging.info(i)
-    if list(request.args.keys())[-1] == "=":
+    if list(request.args.keys())[-1] in ("=", ""):
         key = list(request.args.keys())[-2]
     else:
         key = list(request.args.keys())[-1]
@@ -385,6 +385,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
