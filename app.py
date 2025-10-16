@@ -154,118 +154,115 @@ def sign():
                     }
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
-    for i in list(request.args.keys()):
-        logging.info(i)
-    if list(request.args.keys())[-1] in ("=", ""):
-        key = list(request.args.keys())[-3]
-    else:
-        key = list(request.args.keys())[-1]
-    logging.info(f"===== the key is {key} =====")
-    value = request.args[key]
-    if key == 'name' and value:
-        sign_detailes['name'] = value
-        return jsonify({
-                "type": "getDTMF",
-                "name": "tz",
-                "max": 9,
-                "min": 9,
-                "timeout": 5,
-                "confirmType": "no",
-                "files": [{"text": "נא הקש את מספר תעודת הזהות של בעל העסק"}]
-                }
-                )
-    elif key == "tz" and value:
-        if validator.validate_israeli_id(value):
-            sign_detailes['tz'] = value
+    for key in ['password', 'category', 'open_compeny', 'compeny_name', 'tz', 'name']:
+        if key not in request.args.keys():
+            continue
+        logging.info(f"===== the key is {key} =====")
+        value = request.args[key]
+        if key == 'name' and value:
+            sign_detailes['name'] = value
             return jsonify({
-                "type": "stt",
-                "name": "compeny_name",
-                "max": 4,
-                "min": 1,
-                "fileName": f"compeny_name_{phone}",
-                "files": [{"text": "אמרו בקול ברור את שם העסק"}]
-                }
-                )
-        else:
+                    "type": "getDTMF",
+                    "name": "tz",
+                    "max": 9,
+                    "min": 9,
+                    "timeout": 5,
+                    "confirmType": "no",
+                    "files": [{"text": "נא הקש את מספר תעודת הזהות של בעל העסק"}]
+                    }
+                    )
+        elif key == "tz" and value:
+            if validator.validate_israeli_id(value):
+                sign_detailes['tz'] = value
+                return jsonify({
+                    "type": "stt",
+                    "name": "compeny_name",
+                    "max": 4,
+                    "min": 1,
+                    "fileName": f"compeny_name_{phone}",
+                    "files": [{"text": "אמרו בקול ברור את שם העסק"}]
+                    }
+                    )
+            else:
+                return jsonify({
+                    "type": "getDTMF",
+                    "name": "tz",
+                    "max": 9,
+                    "min": 9,
+                    "timeout": 5,
+                    "confirmType": "no",
+                    "files": [{"text": "מספר תעודת הזהות שהוקש אינו תקין. נא הקש את תעודת הזהות של בעל העסק"}]
+                    }
+                    )
+        elif key == "compeny_name" and value:
+            sign_detailes['compeny_name'] = value
             return jsonify({
-                "type": "getDTMF",
-                "name": "tz",
-                "max": 9,
-                "min": 9,
-                "timeout": 5,
-                "confirmType": "no",
-                "files": [{"text": "מספר תעודת הזהות שהוקש אינו תקין. נא הקש את תעודת הזהות של בעל העסק"}]
-                }
-                )
-    elif key == "compeny_name" and value:
-        sign_detailes['compeny_name'] = value
-        return jsonify({
-                "type": "getDTMF",
-                "name": "open_compeny",
-                "max": 4,
-                "min": 4,
-                "timeout": 5,
-                "confirmType": "digits",
-            "files": [{"text": "נא הקש בארבע ספרות את שנת פתיחת העסק"}]
-                }
-                )
-    elif key == 'open_compeny' and value:
-        if datetime.now().year >= value >= 2000:
-            sign_detailes['open_compeny'] = value
+                    "type": "getDTMF",
+                    "name": "open_compeny",
+                    "max": 4,
+                    "min": 4,
+                    "timeout": 5,
+                    "confirmType": "digits",
+                "files": [{"text": "נא הקש בארבע ספרות את שנת פתיחת העסק"}]
+                    }
+                    )
+        elif key == 'open_compeny' and value:
+            if int(datetime.now().year) >= int(value) >= 2000:
+                sign_detailes['open_compeny'] = value
+                return jsonify({
+                    "type": "stt",
+                    "name": "category",
+                    "max": 4,
+                    "min": 2,
+                    "fileName": f"compeny_name_{phone}",
+                    "files": [{"text": "אמרו בקול ברור את תחום העיסוק"}]
+                    }
+                    )
+            else:
+                return jsonify({
+                    "type": "getDTMF",
+                    "name": "open_compeny",
+                    "max": 4,
+                    "min": 4,
+                    "timeout": 5,
+                    "confirmType": "digits",
+                    "files": [{"text": "השנה שנבחרה לא תקינה. נא להקיש בארבע ספרות את שנת פתיחת העסק"}]
+                    }
+                    )
+        elif key == 'category' and value:
+            sign_detailes['category'] = value
             return jsonify({
-                "type": "stt",
-                "name": "category",
-                "max": 4,
-                "min": 2,
-                "fileName": f"compeny_name_{phone}",
-                "files": [{"text": "אמרו בקול ברור את תחום העיסוק"}]
-                }
-                )
-        else:
+                    "type": "getDTMF",
+                    "name": "password",
+                    "max": 8,
+                    "min": 4,
+                    "timeout": 5,
+                    "confirmType": "digits",
+                    "files": [{"text": "נא בחר סיסמה להתחברות למערכת. הסיסמה צריכה להיות באורך של ארבע עד שמונה ספרות"}]
+                    }
+                    )
+        elif key == 'password' and value:
+            sign_detailes['password'] = value
+            return fix_sign()
+    
+        elif key == 'fix_sign' and value == '0':
+            # הפניה להתחברות לקוח
             return jsonify({
-                "type": "getDTMF",
-                "name": "open_compeny",
-                "max": 4,
-                "min": 4,
-                "timeout": 5,
-                "confirmType": "digits",
-                "files": [{"text": "השנה שנבחרה לא תקינה. נא להקיש בארבע ספרות את שנת פתיחת העסק"}]
+                "type": "extensionChange",
+                "extensionIdChange": "1663"
                 }
                 )
-    elif key == 'category' and value:
-        sign_detailes['category'] = value
-        return jsonify({
-                "type": "getDTMF",
-                "name": "password",
-                "max": 8,
-                "min": 4,
-                "timeout": 5,
-                "confirmType": "digits",
-                "files": [{"text": "נא בחר סיסמה להתחברות למערכת. הסיסמה צריכה להיות באורך של ארבע עד שמונה ספרות"}]
-                }
-                )
-    elif key == 'password' and value:
-        sign_detailes['password'] = value
-        return fix_sign()
-
-    elif key == 'fix_sign' and value == '0':
-        # הפניה להתחברות לקוח
-        return jsonify({
-            "type": "extensionChange",
-            "extensionIdChange": "1663"
+    
+       
+    return jsonify({
+            "type": "stt",
+            "name": "name",
+            "max": 4,
+            "min": 2,
+            "fileName": f"name_{phone}",
+            "files": [{"text": "אמרו בקול ברור את שם בעל העסק"}]
             }
             )
-
-    else:
-        return jsonify({
-                "type": "stt",
-                "name": "name",
-                "max": 4,
-                "min": 2,
-                "fileName": f"name_{phone}",
-                "files": [{"text": "אמרו בקול ברור את שם בעל העסק"}]
-                }
-                )
 @app.route('/create_recpt', methods=['GET'])
 def create_recpt():
     """
@@ -385,6 +382,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
