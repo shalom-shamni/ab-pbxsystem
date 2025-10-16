@@ -16,7 +16,7 @@ call_data = {}
 
 @app.route('/login', methods=['GET'])
 def login():
-    call_id = request.args.get('PBXcallid', '')
+    call_id = request.args.get('PBXcallId', '')
     data = call_data.setdefault(call_id, {})
     tryings = data.setdefault('count', 0)
     phone = request.args.get('PBXphone', '')
@@ -97,7 +97,7 @@ def sign():
     תחום עיסוק
     """
     phone = request.args.get('PBXphone', '')
-    call_id = request.args.get('PBXcallid', '')
+    call_id = request.args.get('PBXcallId', '')
     data = call_data.setdefault(call_id, {})
     sign_detailes = data.setdefault('sign_detailes', {})
 
@@ -122,7 +122,6 @@ def sign():
                       "extensionChange": "1664",
                       "files": [{"text": "ההרשמה הושלמה בהצלחה! הנכם מועברים לתפריט הראשי"}]
                     }
-
                     )
             except Exception as e:
                 return jsonify(
@@ -136,9 +135,23 @@ def sign():
                       "extensionChange": "1663",
                       "files": [{"text": "שגיאה בתהליך ההרשמה"}]
                     }
-
+                    )
+        else:
+            return jsonify(
+                    {
+                      "type": "simpleMenu",
+                      "name": "error_sign",
+                      "times": 1,
+                      "timeout": 5,
+                      "enabledKeys": "",
+                       "setMusic": "no",
+                      "extensionChange": "1663",
+                      "files": [{"text": "שגיאה בתהליך ההרשמה"}]
+                    }
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
+    for i in list(request.args.keys()):
+        print(i)
     if list(request.args.keys())[-1] == "=":
         key = list(request.args.keys())[-2]
     else:
@@ -368,6 +381,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
