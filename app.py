@@ -17,6 +17,9 @@ db_path = r"pbx_system.db"
 
 db = DatabaseService(db_path)
 call_data = {}
+# שמירת לקוח דוגמא
+db.create_customer("0533154518", "1234", "שלום",
+                   "211979521")
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -39,7 +42,7 @@ def login():
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
     items = [_ for _ in request.args.items() if _[0] == "password"]
-    if len(keys) <= 0:
+    if len(items) <= 0:
         return jsonify({
                 "type": "getDTMF",
                 "name": "password",
@@ -383,6 +386,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
