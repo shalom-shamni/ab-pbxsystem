@@ -38,8 +38,20 @@ def login():
                     }
                     )
     # קבלת קלט מהמשתמש - הערך האחרון
-    key = [_ for _ in request.args.keys() if _ == "password"][-1]
-    value = request.args[key]
+    items = [_ for _ in request.args.items() if _[0] == "password"]
+    if len(keys) <= 0:
+        return jsonify({
+                "type": "getDTMF",
+                "name": "password",
+                "max": 10,
+                "min": 4,
+                "timeout": 5,
+                "confirmType": "no",
+                "files":[{"text": "לכניסה למערכת נא הקש את הסיסמה"}]
+                }
+                )
+    key = items[-1][0]
+    value = items[-1][1]
 
     # אימות סיסמה
     if key == 'password':
@@ -77,16 +89,7 @@ def login():
                 }
                 )
     else:
-        return jsonify({
-                "type": "getDTMF",
-                "name": "password",
-                "max": 10,
-                "min": 4,
-                "timeout": 5,
-                "confirmType": "no",
-                "files":[{"text": "לכניסה למערכת נא הקש את הסיסמה"}]
-                }
-                )
+        
 
 @app.route('/sign', methods=['GET'])
 def sign():
@@ -382,6 +385,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
