@@ -13,133 +13,6 @@ db_path = r"pbx_system.db"
 
 db = DatabaseService(db_path)
 
-
-@app.route('/new_call', methods=['GET', 'POST'])
-def new_call():
-    # הדפס את כל הפרמטרים שמגיעים
-    print("=== API CALL DEBUG ===")
-    print(f"Method: {request.method}")
-    print(f"Args: {dict(request.args)}")
-    print(f"Form: {dict(request.form)}")
-    print(f"Headers: {dict(request.headers)}")
-    
-    call_id = request.args.get('PBXcallId', '') or request.form.get('PBXcallId', '')
-    phone = request.args.get('PBXphone', '') or request.form.get('PBXphone', '')
-    
-    print(f"Extracted - call_id: '{call_id}', phone: '{phone}'")
-    
-    # בדוק אם הטלפון בכלל מגיע
-    if not phone:
-        print("ERROR: No phone number received!")
-        return jsonify({"error": "No phone parameter"}), 400
-    
-    # בדוק את בסיס הנתונים
-    customer = db.get_customer_by_phone(phone)
-    print(f"Customer lookup result: {customer}")
-    
-    if customer:
-        response = {
-                    "type": "simpleMenu",
-                    "name": "error_password",
-                    "times": 1,
-                    "timeout": 0.1,
-                    "enabledKeys": "",
-                     "setMusic": "no",
-                    "extensionChange": "1663",
-                    "files":[{"text": ""}]
-                    }
-                    
-        print(f"Sending response for existing customer: {response}")
-        return jsonify(response)
-    else:
-        response = {
-                    "type": "simpleMenu",
-                    "name": "error_password",
-                    "times": 1,
-                    "timeout": 0.1,
-                    "enabledKeys": "",
-                     "setMusic": "no",
-                    "extensionChange": "1664",
-                    "files":[{"text": ""}]
-                    }
-        print(f"Sending response for new customer: {response}")
-        return jsonify(response)
-
-
-
-@app.route('/login', methods=['GET']) # מזהה שלוחה 1663
-def login():
-    count = 0
-    phone = request.args.get('PBXphone', '')
-    customer = db.get_customer_by_phone(phone)
-    if not customer:
-        return jsonify({
-                    "type": "simpleMenu",
-                    "name": "customer_not_found",
-                    "times": 1,
-                    "timeout": 0.2,
-                    "enabledKeys": "",
-                     "setMusic": "no",
-                    "extensionChange": "/2",
-                    "files": [{"text": "אינכם מנויים עדיין למערכת. הינכם מועברים להרשמה"
-                    }]
-                    }
-                    )
-    # קבלת קלט מהמשתמש - הערך האחרון
-    key = list(request.args.keys())[-1]
-    value = request.args[key]
-
-    # אימות סיסמה
-    if key == 'password':
-        if db.verify_password(phone, value):
-            # ניתוב לתפריט לקוחות קיימים
-            return jsonify({
-                    "type": "extensionChange",
-                    "extensionIdChange": "1668"
-                }
-                )
-        else:
-            if count > 4:
-                # מספר נסיונות שגויים גדול מ 4 - הודעת שגיאה
-                return jsonify({
-                    "type": "simpleMenu",
-                    "name": "error_password",
-                    "times": 1,
-                    "timeout": 5,
-                    "enabledKeys": "",
-                     "setMusic": "no",
-                    "extensionChange": "",
-                    "files":[{"text": "יותר מדי נסיונות שגויים"}]
-                    }
-                    )
-            # אם לא - העלה את מונה הנסיונות והמשך לניסיון הבא
-            count += 1
-            return jsonify({
-                "type": "getDTMF",
-                "name": "password",
-                "max": 10,
-                "min": 4,
-                "timeout": 5,
-                "enabledKeys": "0,1,2,3,4,5,6,7,8,9,#",
-                "confirmType": "no",
-                "files": [{"text": "הסיסמה שגויה. לכניסה למערכת נא הקש את הסיסמה"
-                }]
-            }
-                )
-    else:
-        return jsonify({
-                "type": "getDTMF",
-                "name": "password",
-                "max": 10,
-                "min": 4,
-                "timeout": 5,
-                "enabledKeys": "0,1,2,3,4,5,6,7,8,9,#",
-                "confirmType": "no",
-                "files": [{"text": "לכניסה למערכת נא הקש את הסיסמה"
-                }]
-        }
-                )
-
 @app.route('/login', methods=['GET'])
 def login():
     call_id = request.args.get('PBXcallid', '')
@@ -493,6 +366,7 @@ def rigths():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # ברירת מחדל 5000 לוקאלית
     app.run(host="0.0.0.0", port=port)
+
 
 
 
